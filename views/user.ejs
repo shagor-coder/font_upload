@@ -11,15 +11,24 @@
           </div>
           <div class="col-md-8 mx-auto">
             <div class="mb-3">
-              <label for="upload" class="form-label text-white">File</label>
-              <input
-                type="file"
-                name="font"
-                id="upload"
-                accept=".woff,.woff2"
-              />
+              <label
+                for="upload"
+                class="p-4 d-flex align-items center justify-content-center text-white bg-gradient border border-1 rounded pointer"
+              >
+                <span>Upload A Font</span>
+
+                <input
+                  type="file"
+                  name="font"
+                  id="upload"
+                  accept=".woff,.woff2"
+                  hidden
+                />
+              </label>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="form-group text-center">
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
           </div>
         </form>
       </div>
