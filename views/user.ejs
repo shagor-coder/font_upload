@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("partials/head",{title: "User | Font Upload"})%>
+  <body>
+    <header class="py-1"><%- include("partials/navbar") %></header>
+    <main class="py-5">
+      <div class="container">
+        <form class="row" id="uploadForm">
+          <div class="col-12">
+            <h1>Upload A Font</h1>
+          </div>
+          <div class="col-md-8 mx-auto">
+            <div class="mb-3">
+              <label for="upload" class="form-label text-white">File</label>
+              <input
+                type="file"
+                name="font"
+                id="upload"
+                accept=".woff,.woff2"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </main>
+    <%- include('partials/footer') %>
+  </body>
+</html>

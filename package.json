@@ -1,0 +1,20 @@
+{
+  "name": "font_upload",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon  server.js --ext ejs js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^2.0.22",
+    "reload": "^3.2.1"
+  },
+  "dependencies": {
+    "ejs": "^3.1.9"
+  }
+}
