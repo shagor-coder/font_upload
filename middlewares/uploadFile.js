@@ -1,11 +1,17 @@
 const multer = require('multer');
+const path = require('path');
 
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		cb(null, 'uploads/');
+		const userFolder = path.join(__dirname, '../uploads/');
+		cb(null, userFolder);
 	},
 	filename: function (req, file, cb) {
-		cb(null, file.originalname.toLowerCase());
+		cb(
+			null,
+			new Date().getTime() +
+				file.originalname.trim().toLowerCase().replaceAll(' ', '_')
+		);
 	},
 });
 
