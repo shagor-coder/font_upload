@@ -5,6 +5,7 @@ const path = require('path');
 const upload = require('../middlewares/uploadFile');
 const UserController = require('../controller/userController');
 const LoginController = require('../controller/loginController');
+const checkAuthToken = require('../middlewares/checkAuthToken');
 
 router
 	.get('/', (req, res) => {
@@ -20,19 +21,16 @@ router
 		const fileName = req.params.file;
 		const filePath = path.join(__dirname, '../uploads/', fileName);
 
-		res.sendFile(filePath, function (err) {
-			if (err) {
-				console.log(err);
-				res.status(err.status).end();
-			} else {
-				console.log('Sent:', fileName);
-			}
-		});
+		try {
+			res.sendFile(filePath);
+		} catch (error) {
+			res.json({ status: 404, message: 'Requested File Not Found!!' });
+		}
 	})
 	.get('/user', async (req, res) => {})
 	.post('/signup', UserController)
 	.post('/login', LoginController)
-	.post('/font', upload.single('font'), (req, res) => {
+	.post('/font', checkAuthToken, upload.single('font'), (req, res) => {
 		try {
 			const fileName = req.file.filename;
 			const filePath = `${req.protocol}://${req.get(

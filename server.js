@@ -4,12 +4,13 @@ const path = require('path');
 const reload = require('reload');
 const router = require('./router/router');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const app = express();
 
 const PORT = process.env.PORT || 3002;
 const HOST = 'localhost';
-
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
