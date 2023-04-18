@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <%- include("partials/head",{title: "Login | Font Upload"})%>
+<%- include("partials/head",{title: "Login | Font Upload" })%>
+
   <body>
     <header class="py-1"><%- include("partials/navbar") %></header>
     <main class="py-5">
@@ -11,25 +12,13 @@
           </div>
           <div class="col-md-8 mx-auto">
             <div class="mb-3">
-              <label for="leInputEmail1" class="form-label text-white"
-                >Email address</label
-              >
-              <input
-                type="email"
-                class="form-control bg-dark text-white"
-                id="leInputEmail1"
-                aria-describedby="emailHelp"
-              />
+              <label for="leInputEmail1" class="form-label text-white">Email address</label>
+              <input type="email" class="form-control bg-dark text-white" id="leInputEmail1"
+                aria-describedby="emailHelp" name="email" />
             </div>
             <div class="mb-3">
-              <label for="leInputPassword1" class="form-label text-white"
-                >Password</label
-              >
-              <input
-                type="password"
-                class="form-control bg-dark text-white"
-                id="leInputPassword1"
-              />
+              <label for="leInputPassword1" class="form-label text-white">Password</label>
+              <input type="password" class="form-control bg-dark text-white" id="leInputPassword1" name="password" />
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
           </div>
@@ -37,5 +26,57 @@
       </div>
     </main>
     <%- include('partials/footer') %>
+
+      <script>
+
+
+        const token = JSON.parse(localStorage.getItem("_font_upload_token"))
+        if (token) {
+          location.pathname = "profile"
+        }
+
+        const signUpForm = document.querySelector("#loginForm")
+        const inputs = [...signUpForm.querySelectorAll("input")]
+        const submitButton = signUpForm.querySelector("button[type='submit']")
+
+        const dataStore = {
+          email: "",
+          password: "",
+        }
+
+        inputs.forEach(input => {
+          input.addEventListener("input", (e) => {
+            dataStore[input.name.trim()] = input.value.trim()
+          })
+        })
+
+        submitButton.addEventListener("click", async (e) => {
+          e.preventDefault()
+          if (!dataStore.password || !dataStore.email) return console.log("Please fill All Input")
+          try {
+            const requestBody = {
+              email: dataStore.email,
+              password: dataStore.password
+            }
+            const request = await fetch("http://localhost:3002/login", {
+              method: "POST", headers: {
+                "Content-Type": "application/json"
+              }, body: JSON.stringify(requestBody),
+            })
+            const response = await request.json()
+            if (response.status === 200) {
+              const token = response.user
+              localStorage.setItem("_font_upload_token", JSON.stringify(token))
+              location.pathname = "profile"
+            } else {
+              console.log(response.message)
+            }
+          } catch (error) {
+            console.log(error)
+          }
+        })
+
+      </script>
   </body>
+
 </html>

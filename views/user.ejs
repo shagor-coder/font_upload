@@ -3,30 +3,122 @@
 <%- include("partials/head",{title: "User | Font Upload" })%>
 
   <body>
+
+    <div class="position-fixed vw-100 vh-100 d-flex justify-content-center align-items-center bg-dark" id="loader">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+
     <header class="py-1"><%- include("partials/navbar") %></header>
     <main class="py-5">
       <div class="container">
-        <form class="row" id="uploadForm">
+        <div class="row" id="user_info">
+        </div>
+        <form class="row" enctype="multipart/form-data" id="uploadForm">
           <div class="col-12">
             <h1>Upload A Font</h1>
           </div>
           <div class="col-md-8 mx-auto">
             <div class="mb-3">
-              <label for="upload"
+              <label for="font"
                 class="p-4 d-flex align-items center justify-content-center text-white bg-gradient border border-1 rounded pointer">
                 <span>Upload A Font</span>
 
-                <input type="file" name="font" id="upload" accept=".woff,.woff2" hidden />
+                <input type="file" name="font" id="font" accept=".woff,.woff2" hidden />
               </label>
             </div>
             <div class="form-group text-center">
-              <button type="submit" class="btn btn-primary">Submit</button>
+              <button id="uploadButton" type="submit" class="btn btn-primary">Submit</button>
             </div>
           </div>
         </form>
       </div>
     </main>
     <%- include('partials/footer') %>
+
+      <script>
+
+        const token = JSON.parse(localStorage.getItem("_font_upload_token"))
+
+        async function getAuthenticatedUser() {
+          try {
+            const request = await fetch("http://localhost:3002/profile", {
+              method: "POST", headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+              }
+            })
+            const response = await request.json()
+            if (response.status === 200) {
+              return response.data;
+            } else {
+              console.log(response.message)
+              localStorage.removeItem("_font_upload_token")
+              location.pathname = "login"
+            }
+          } catch (error) {
+            console.log(error)
+          }
+        }
+        async function showUserDetails() {
+          const userInfo = document.querySelector("#user_info")
+
+          const userData = await getAuthenticatedUser()
+
+          userInfo.innerHTML = `
+          <div class="col-md-8 mx-auto">
+            <div class="col-md-6">
+             <h2 class="text-white">Welcome, ${userData.full_name}</h2>
+            </div>
+            <div class="col-md-6">
+              ${userData.fonts.map(font => {
+            return `<h3 class="fs-4 text-white">${font.name}</h3>
+                      <p class="lead mt-2 text-white">${font.fontURL}</p>`
+          })}
+            </div>
+          </div>
+          `
+
+          const loader = document.querySelector("#loader")
+          loader.style = `display: none !important;`
+        }
+
+        const upload = document.querySelector("input#font")
+        const uploadButton = document.querySelector("#uploadButton")
+
+        const myForm = document.querySelector('#uploadForm')
+        myForm.addEventListener('submit', (e) => {
+          e.preventDefault()
+          const formData = new FormData()
+          formData.append("font", upload.files[0])
+          handleFontUpload(formData)
+        })
+
+        async function handleFontUpload(formData) {
+          loader.style = `display: flex !important;`
+          try {
+            const request = await fetch("http://localhost:3002/font", {
+              method: "POST", headers: {
+                "Authorization": `Bearer ${token}`
+              },
+              body: formData
+            })
+            const response = await request.json()
+            if (response.status === 200) {
+              return showUserDetails();
+            } else {
+              console.log(response.message)
+              location.pathname = "login"
+            }
+          } catch (error) {
+            console.log(error)
+          }
+        }
+
+        showUserDetails()
+      </script>
   </body>
 
 </html>

@@ -31,12 +31,62 @@
                             <input type="password" class="form-control bg-dark text-white" id="leInputPasswordConfirm"
                                 name="confirm_password" />
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary">Sign Up</button>
                     </div>
                 </form>
             </div>
         </main>
         <%- include('partials/footer') %>
+
+            <script>
+                const token = JSON.parse(localStorage.getItem("_font_upload_token"))
+                if (token) {
+                    location.pathname = "profile"
+                }
+                const signUpForm = document.querySelector("#loginForm")
+                const inputs = [...signUpForm.querySelectorAll("input")]
+                const submitButton = signUpForm.querySelector("button[type='submit']")
+
+                const dataStore = {
+                    full_name: "",
+                    email: "",
+                    password: "",
+                    confirm_password: ""
+                }
+
+                inputs.forEach(input => {
+                    input.addEventListener("input", (e) => {
+                        dataStore[input.name.trim()] = input.value.trim()
+                    })
+                })
+
+                submitButton.addEventListener("click", async (e) => {
+                    e.preventDefault()
+                    if (!dataStore.password || !dataStore.confirm_password || !dataStore.email || !dataStore.full_name) return console.log("Please fill All Input")
+                    if (!dataStore.password === dataStore.confirm_password) return console.log("Password Not Matched")
+                    try {
+                        const requestBody = {
+                            full_name: dataStore.full_name,
+                            email: dataStore.email,
+                            password: dataStore.password
+                        }
+                        const request = await fetch("http://localhost:3002/signup", {
+                            method: "POST", headers: {
+                                "Content-Type": "application/json"
+                            }, body: JSON.stringify(requestBody),
+                        })
+                        const response = await request.json()
+                        if (response.status === 200) {
+                            location.href = "http://localhost:3002/login"
+                        } else {
+                            console.log(response.message)
+                        }
+                    } catch (error) {
+                        console.log(error)
+                    }
+                })
+
+            </script>
     </body>
 
 </html>

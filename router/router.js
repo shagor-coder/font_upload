@@ -7,6 +7,10 @@ const UserController = require('../controller/userController');
 const LoginController = require('../controller/loginController');
 const checkAuthToken = require('../middlewares/checkAuthToken');
 
+const uploadFileController = require('../controller/uploadFileController');
+const deleteFileController = require('../controller/deleteFileController');
+const profileController = require('../controller/profileController');
+
 router
 	.get('/', (req, res) => {
 		res.render('index');
@@ -17,9 +21,13 @@ router
 	.get('/signup', (req, res) => {
 		res.render('signup');
 	})
-	.get('/uploads/:file', (req, res) => {
+	.get('/profile', (req, res) => {
+		res.render('user');
+	})
+	.get('/uploads/:id/:file', (req, res) => {
 		const fileName = req.params.file;
-		const filePath = path.join(__dirname, '../uploads/', fileName);
+		const fileFolder = req.params.id;
+		const filePath = path.join(__dirname, `../uploads/${fileFolder}`, fileName);
 
 		try {
 			res.sendFile(filePath);
@@ -27,27 +35,10 @@ router
 			res.json({ status: 404, message: 'Requested File Not Found!!' });
 		}
 	})
-	.get('/user', async (req, res) => {})
+	.delete('/font/:name', checkAuthToken, deleteFileController)
+	.post('/profile', checkAuthToken, profileController)
 	.post('/signup', UserController)
 	.post('/login', LoginController)
-	.post('/font', checkAuthToken, upload.single('font'), (req, res) => {
-		try {
-			const fileName = req.file.filename;
-			const filePath = `${req.protocol}://${req.get(
-				'host'
-			)}/uploads/${fileName}`;
-
-			res.json({
-				status: 200,
-				message: 'Upload Successfull!!',
-				data: { fileName: fileName, filePath: filePath },
-			});
-		} catch (err) {
-			res.json({
-				status: 401,
-				message: err.message,
-			});
-		}
-	});
+	.post('/font', checkAuthToken, upload.single('font'), uploadFileController);
 
 module.exports = router;
