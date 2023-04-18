@@ -2,9 +2,9 @@
 	"name": "font_upload",
 	"version": "1.0.0",
 	"description": "",
-	"main": "server.js",
+	"main": "index.js",
 	"scripts": {
-		"start": "nodemon server.js --ext ejs,js,css"
+		"start": "nodemon index.js --ext ejs,js,css"
 	},
 	"keywords": [],
 	"author": "",
