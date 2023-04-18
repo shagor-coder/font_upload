@@ -6,7 +6,6 @@ const upload = require('../middlewares/uploadFile');
 const UserController = require('../controller/userController');
 const LoginController = require('../controller/loginController');
 const checkAuthToken = require('../middlewares/checkAuthToken');
-
 const uploadFileController = require('../controller/uploadFileController');
 const deleteFileController = require('../controller/deleteFileController');
 const profileController = require('../controller/profileController');
