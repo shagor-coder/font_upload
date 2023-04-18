@@ -30,7 +30,6 @@ app.listen(PORT, () => {
 });
 
 reload(app);
-
 mongoose
 	.connect(process.env.MONGODB_URI, {
 		useNewUrlParser: true,
