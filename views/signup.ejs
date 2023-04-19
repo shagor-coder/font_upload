@@ -70,14 +70,14 @@
                             email: dataStore.email,
                             password: dataStore.password
                         }
-                        const request = await fetch("http://localhost:3002/signup", {
+                        const request = await fetch("https://font-upload.vercel.app/signup", {
                             method: "POST", headers: {
                                 "Content-Type": "application/json"
                             }, body: JSON.stringify(requestBody),
                         })
                         const response = await request.json()
                         if (response.status === 200) {
-                            location.href = "http://localhost:3002/login"
+                            location.href = "https://font-upload.vercel.app/login"
                         } else {
                             console.log(response.message)
                         }
