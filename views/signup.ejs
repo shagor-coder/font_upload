@@ -77,7 +77,7 @@
                         })
                         const response = await request.json()
                         if (response.status === 200) {
-                            location.href = "https://font-upload.vercel.app/login"
+                            location.pathname = "login"
                         } else {
                             console.log(response.message)
                         }
