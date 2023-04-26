@@ -58,7 +58,7 @@
               email: dataStore.email,
               password: dataStore.password
             }
-            const request = await fetch("https://font-upload.vercel.app/login", {
+            const request = await fetch("http://localhost:3002/login", {
               method: "POST", headers: {
                 "Content-Type": "application/json"
               }, body: JSON.stringify(requestBody),

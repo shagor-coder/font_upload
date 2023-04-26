@@ -12,6 +12,7 @@ const userScema = new Schema(
 				fontURL: String,
 			},
 		],
+		isVerified: Boolean,
 	},
 	{ collection: 'users' }
 );

@@ -1,7 +1,7 @@
 const UserModel = require('../models/userModels');
 const bcrypt = require('bcrypt');
 
-const UserController = async function (req, res) {
+const UserController = async function (req, res, next) {
 	const reqBody = req.body;
 
 	const hashed = await bcrypt.hash(reqBody.password, 10);
@@ -9,6 +9,7 @@ const UserController = async function (req, res) {
 		full_name: reqBody.full_name,
 		email: reqBody.email,
 		password: hashed,
+		isVerified: false,
 	};
 	try {
 		const createdUser = await UserModel.create(userDoc);
@@ -16,11 +17,8 @@ const UserController = async function (req, res) {
 			id: createdUser._id.toString(),
 			email: createdUser.email,
 		};
-		res.json({
-			status: 200,
-			message: 'User Created',
-			user: user,
-		});
+		req.createdUser = user;
+		next();
 	} catch (err) {
 		res.json({ status: 404, message: err.message });
 	}
