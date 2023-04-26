@@ -44,7 +44,7 @@
 
         async function getAuthenticatedUser() {
           try {
-            const request = await fetch("http://localhost:3002/profile", {
+            const request = await fetch("https://font-upload.vercel.app/profile", {
               method: "POST", headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
@@ -110,7 +110,7 @@
         async function handleFontUpload(formData) {
           loader.style = `display: flex !important;`
           try {
-            const request = await fetch("http://localhost:3002/font", {
+            const request = await fetch("https://font-upload.vercel.app/font", {
               method: "POST", headers: {
                 "Authorization": `Bearer ${token}`,
               },
