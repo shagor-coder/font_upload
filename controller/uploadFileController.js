@@ -1,7 +1,17 @@
 const UserModel = require('../models/userModels');
+const File = require('../models/fileModel');
 
 const uploadFileController = async function (req, res) {
 	try {
+		const file = new File({
+			filename: req.file.filename,
+			contentType: 'woff2',
+			size: req.file.size,
+			path: req.file.path,
+		});
+
+		await file.save();
+
 		const fileName = req.file.filename;
 		const filePath = `${req.protocol}://${req.get('host')}/uploads/${
 			req.id

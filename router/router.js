@@ -2,13 +2,15 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const path = require('path');
-const upload = require('../middlewares/uploadFile');
+// const upload = require('../middlewares/uploadFile');
 const UserController = require('../controller/userController');
 const LoginController = require('../controller/loginController');
 const checkAuthToken = require('../middlewares/checkAuthToken');
-const uploadFileController = require('../controller/uploadFileController');
+// const uploadFileController = require('../controller/uploadFileController');
 const deleteFileController = require('../controller/deleteFileController');
 const profileController = require('../controller/profileController');
+const { uploadFileController2 } = require('../controller/uploadController_v2');
+const upload2 = require('../controller/uploadFile_v2');
 
 router
 	.get('/', (req, res) => {
@@ -38,6 +40,6 @@ router
 	.post('/profile', checkAuthToken, profileController)
 	.post('/signup', UserController)
 	.post('/login', LoginController)
-	.post('/font', checkAuthToken, upload.single('font'), uploadFileController);
+	.post('/font', checkAuthToken, upload2.single('font'), uploadFileController2);
 
 module.exports = router;
