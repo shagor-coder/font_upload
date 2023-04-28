@@ -42,6 +42,8 @@
 
         const token = JSON.parse(localStorage.getItem("_font_upload_token"))
 
+        if (!token) location.pathname = "login"
+
         async function getAuthenticatedUser() {
           try {
             const request = await fetch("http://localhost:3002/profile", {
@@ -51,7 +53,7 @@
               }
             })
             const response = await request.json()
-            if (response.status === 200) {
+            if (response) {
               return response.data;
             } else {
               console.log(response.message)

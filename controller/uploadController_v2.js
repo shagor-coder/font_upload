@@ -34,8 +34,7 @@ const uploadFileController2 = async function (req, res) {
 			},
 		});
 		fileStream.on('error', (error) => {
-			res.json({
-				status: 401,
+			res.status(500).json({
 				message: error.message,
 			});
 		});
@@ -54,23 +53,21 @@ const uploadFileController2 = async function (req, res) {
 
 					await UserModel.findByIdAndUpdate(req.id, update);
 
-					res.json({
+					res.status(200).json({
 						status: 200,
 						message: 'Upload successful!',
 						data: { name: fileName, url: url[0] },
 					});
 				})
 				.catch((error) => {
-					res.json({
-						status: 401,
+					res.status(500).json({
 						message: error.message,
 					});
 				});
 		});
 		fileStream.end(Buffer.from(base64String, 'base64'));
 	} catch (err) {
-		res.json({
-			status: 401,
+		res.status(500).json({
 			message: err.message,
 		});
 	}

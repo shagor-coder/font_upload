@@ -1,36 +1,31 @@
 const nodemailer = require('nodemailer');
 
 const sendVerificationEmailToUser = async function (req, res) {
-	let testAccount = await nodemailer.createTestAccount();
-
 	const transporter = nodemailer.createTransport({
-		host: 'smtp.ethereal.email',
-		port: 587,
-		secure: false,
+		service: 'Gmail',
 		auth: {
-			user: testAccount.user, // generated ethereal user
-			pass: testAccount.pass, // generated ethereal password
+			user: 'fontupload72@gmail.com',
+			pass: 'bbktvfkqdiuotiik',
 		},
 	});
 
 	try {
 		const info = await transporter.sendMail({
-			from: testAccount.user,
+			from: 'fontupload72@gmail.com',
 			to: req.createdUser.email,
 			subject: 'Please verfiy your email',
-			text: `Click this link to verify ${req.protocol}://${req.get(
-				'host'
-			)}/verify/${req.createdUser.id}`,
+			html: `<div>Click this link to verify <a href="${
+				req.protocol
+			}://${req.get('host')}/verify/${
+				req.createdUser.id
+			}">Click Here</a></div>`,
 		});
-		console.log(info);
-		res.json({
-			status: 200,
-			message: 'Email Sent to' + req.createdUser.email,
+		res.status(200).json({
+			message: 'Email Sent to' + info.messageId,
 		});
 	} catch (error) {
-		res.json({
-			status: 401,
-			message: 'There was an error with gmail!',
+		res.status(500).json({
+			message: error.message,
 		});
 	}
 };

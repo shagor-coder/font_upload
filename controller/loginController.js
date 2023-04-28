@@ -13,19 +13,24 @@ const LoginController = async function (req, res) {
 		const findUser = await UserModel.findOne(payload);
 
 		if (!findUser) {
-			res.json({
-				status: 404,
+			res.status(404).json({
 				message: 'No User Exist!!',
 			});
 
 			return;
 		}
 
+		if (!findUser.isVerified) {
+			res.status(401).json({
+				message: 'Please verify your email first!!',
+			});
+			return;
+		}
+
 		const compare = await bcrypt.compare(reqBody.password, findUser.password);
 
 		if (!compare) {
-			res.json({
-				status: 404,
+			res.status(401).json({
 				message: 'Please check your password',
 			});
 			return;
@@ -36,13 +41,12 @@ const LoginController = async function (req, res) {
 			id: findUser._id.toString(),
 		};
 
-		res.json({
-			status: 200,
+		res.status(200).json({
 			message: 'User Authenticated',
 			user: jwt.sign(tokenPayload, 'secret123'),
 		});
 	} catch (err) {
-		res.json({ status: 404, message: err.message });
+		res.status(500).json({ message: err.message });
 	}
 };
 
