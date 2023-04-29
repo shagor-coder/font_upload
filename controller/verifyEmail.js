@@ -20,7 +20,10 @@ const verfiyEmailAddress = async function (req, res) {
 
 		await UserModel.findByIdAndUpdate(userId, update);
 
-		res.redirect('/login');
+		res.status(200).json({
+			status: 200,
+			message: 'Email successfully verified',
+		});
 	} catch (error) {
 		res.status(401).json({ message: 'There was an error!' });
 	}

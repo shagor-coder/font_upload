@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("partials/head",{title: "Verify Email | Font Upload" })%>
+
+  <body>
+    <header class="py-1"><%- include("partials/navbar") %></header>
+    <main>
+      <div class="alert_box my-4 text-center">
+        <p class="text-white text-center">Please wait...</p>
+        <div class="spinner-border text-dark" role="status">
+          <span class="sr-only visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </main>
+    <%- include('partials/footer') %>
+  </body>
+
+
+  <script>
+
+    async function verifyEmailAddress() {
+      const alertBox = document.querySelector(".alert_box")
+      const url = new URL(location.href)
+      var id = url.pathname.match(/\/verify\/(.+)/)[1];
+      try {
+        const request = await fetch("http://localhost:3002/verify/" + id, {
+          method: "POST", headers: {
+            "Content-Type": "application/json"
+          }
+        })
+        const response = await request.json()
+        if (response.status === 200) {
+          alertBox.innerHTML = `
+          <div class="alert alert-dark" role="alert" style="max-width: 300px; margin: 20px auto;">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1">
+                ${response.message}
+              </div>
+              <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+              </button>
+            </div>
+          </div>
+          <div class="mt-3 text-center">
+            <a class="btn btn-dark" href="/login">Login Now</a>
+          </div>
+          `
+        } else {
+          alertBox.innerHTML = `
+          <div class="alert alert-dark" role="alert" style="max-width: 300px; margin: 20px auto;">
+          <div class="d-flex align-items-center">
+            <div class="flex-grow-1">
+              ${response.message}
+            </div>
+            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+            </button>
+          </div>
+          </div>
+          `
+        }
+      } catch (error) {
+        alertBox.innerHTML = `
+          <div class="alert alert-dark" role="alert" style="max-width: 300px; margin: 20px auto;">
+          <div class="d-flex align-items-center">
+            <div class="flex-grow-1">
+              ${response.message}
+            </div>
+            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+            </button>
+          </div>
+          </div>
+          `
+      }
+    }
+
+    verifyEmailAddress()
+
+  </script>
+
+</html>

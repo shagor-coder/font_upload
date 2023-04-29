@@ -21,7 +21,8 @@ const sendVerificationEmailToUser = async function (req, res) {
 			}">Click Here</a></div>`,
 		});
 		res.status(200).json({
-			message: 'Email Sent to' + info.messageId,
+			status: 200,
+			message: 'Email Sent to ' + req.createdUser.email,
 		});
 	} catch (error) {
 		res.status(500).json({

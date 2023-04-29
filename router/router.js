@@ -21,13 +21,16 @@ router
 	.get('/signup', (req, res) => {
 		res.render('signup');
 	})
-	.get('/verify/:id', verfiyEmailAddress)
+	.get('/verify/:id', (req, res) => {
+		res.render('verify');
+	})
 	.get('/profile', (req, res) => {
 		res.render('user');
 	})
 	.delete('/font/:name', checkAuthToken, deleteFileController)
 	.post('/profile', checkAuthToken, profileController)
 	.post('/signup', UserController, sendVerificationEmailToUser)
+	.post('/verify/:id', verfiyEmailAddress)
 	.post('/login', LoginController)
 	.post('/font', checkAuthToken, upload2.single('font'), uploadFileController2);
 

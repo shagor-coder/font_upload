@@ -77,7 +77,7 @@
                         })
                         const response = await request.json()
                         if (response.status === 200) {
-                            location.pathname = "login"
+                            alert(response.message)
                         } else {
                             console.log(response.message)
                         }
