@@ -52,7 +52,7 @@
 
         async function getAuthenticatedUser() {
           try {
-            const request = await fetch("http://localhost:3002/profile", {
+            const request = await fetch("https://font-upload.vercel.app/profile", {
               method: "POST", headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
@@ -85,15 +85,28 @@
             const result = font.name.split("__")[1].replaceAll("_", " ").replace(/\b\w/g, function (txt) { return txt.toUpperCase(); });
             return `<div class="list-group-item bg-dark"> 
                <h3 class="fs-4 text-white">${result}</h3>
-                      <div class="d-flex align-items-center ">
-                        <p class="lead text-white text-wrap" style="word-wrap: break-word;">${font.fontURL}</p>
-                        <span><i class="fa-solid fa-trash text-white"></i></span>
+                      <div class="d-flex align-items-center fonts_info">
+                        <p class="lead text-white text-wrap" style="max-width: calc(100% - 60px);text-overflow: ellipsis;word-wrap: break-word">${font.fontURL}</p>
+                        <span class="copy_url  text-white" data-url=${font.fontURL} style="width: 40px; text-align: right; cursor: pointer;"><i class="fa-regular fa-clipboard"></i></span>
+                        <span class="delete_font  text-white" data-name=${font.name} style="width: 40px; text-align: right; cursor: pointer;"><i class="fa-solid fa-trash"></i></span>
                       </div>
               </div>`
           }).join(" ")}
             </div>
           </div>
           `
+
+          const deleteFonts = [...userInfo.querySelectorAll(".delete_font i")]
+
+          deleteFonts.forEach(deleteFont => {
+            deleteFont.addEventListener("click", deleteUserFont)
+          })
+          const copyURLs = [...userInfo.querySelectorAll(".copy_url i")]
+
+          copyURLs.forEach(copyBtn => {
+            copyBtn.addEventListener("click", copyURLToClipboard)
+          })
+
 
           const loader = document.querySelector("#loader")
           loader.style = `display: none !important;`
@@ -106,10 +119,6 @@
           fontName.innerHTML = upload.files[0].name
         })
 
-
-        const uploadButton = document.querySelector("#uploadButton")
-
-
         const myForm = document.querySelector('#uploadForm')
         myForm.addEventListener('submit', (e) => {
           e.preventDefault()
@@ -121,7 +130,7 @@
         async function handleFontUpload(formData) {
           loader.style = `display: flex !important;`
           try {
-            const request = await fetch("http://localhost:3002/font", {
+            const request = await fetch("https://font-upload.vercel.app/font", {
               method: "POST", headers: {
                 "Authorization": `Bearer ${token}`,
               },
@@ -138,6 +147,50 @@
           } catch (error) {
             console.log(error)
           }
+        }
+
+        async function deleteUserFont(e) {
+          const fontName = e.target.parentElement.dataset.name
+          loader.style = `display: flex !important;`
+          try {
+            const request = await fetch("https://font-upload.vercel.app/font/" + fontName, {
+              method: "DELETE", headers: {
+                "Authorization": `Bearer ${token}`,
+              },
+            })
+            const response = await request.json()
+            if (response.status === 200) {
+              return showUserDetails();
+            } else {
+              console.log(response.message)
+              // location.pathname = "login"
+            }
+          } catch (error) {
+            console.log(error)
+          }
+
+        }
+
+        const copyTextEl = document.createElement("span")
+        copyTextEl.innerHTML = "Copied"
+
+        async function copyURLToClipboard(e) {
+
+          const copyBtnParent = e.target.parentElement
+          const copyBtn = e.target
+
+          const fontURL = copyBtnParent.dataset.url
+
+          await navigator.clipboard.writeText(fontURL)
+
+          copyBtnParent.append(copyTextEl)
+          copyBtn.style.display = "none"
+
+          setTimeout(() => {
+            copyTextEl.remove()
+            copyBtn.style.display = "inline"
+          }, 1500)
+
         }
 
         showUserDetails()

@@ -1,12 +1,22 @@
+const { storage } = require('../config/firebase');
 const UserModel = require('../models/userModels');
-const fs = require('fs');
-const path = require('path');
 
 const deleteFileController = async function (req, res) {
 	try {
 		const fileName = req.params.name;
-		const filePath = path.join(__dirname, `../uploads/${req.id}/`, fileName);
+		const filePath = req.id + '/' + fileName;
+		console.log(filePath);
 		const user = req.userData;
+		const file = storage.bucket().file(filePath);
+
+		file
+			.delete()
+			.then(() => {
+				console.log(`File ${file.name} deleted successfully.`);
+			})
+			.catch((error) => {
+				console.error(`Error deleting file ${file.name}:`, error);
+			});
 
 		const filteredFonts = user.fonts.filter((font) => {
 			return font.name !== fileName;
@@ -18,16 +28,13 @@ const deleteFileController = async function (req, res) {
 		};
 		await UserModel.findByIdAndUpdate(req.id, update);
 
-		fs.unlink(filePath, (err) => {
-			try {
-				res.json({ status: 200, message: 'Font Deteleted!!' });
-			} catch (error) {
-				res.json({ status: 401, message: error.message });
-			}
+		res.status(200).json({
+			status: 200,
+			message: 'Font Successfully deleted!',
 		});
 	} catch (err) {
-		res.json({
-			status: 401,
+		res.status(500).json({
+			status: 500,
 			message: err.message,
 		});
 	}

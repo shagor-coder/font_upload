@@ -23,7 +23,7 @@
       const url = new URL(location.href)
       var id = url.pathname.match(/\/verify\/(.+)/)[1];
       try {
-        const request = await fetch("http://localhost:3002/verify/" + id, {
+        const request = await fetch("https://font-upload.vercel.app/verify/" + id, {
           method: "POST", headers: {
             "Content-Type": "application/json"
           }

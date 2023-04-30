@@ -1,36 +1,23 @@
-require('dotenv').config();
-const admin = require('firebase-admin');
+const { bucket, corsConfiguration } = require('../config/firebase');
 const UserModel = require('../models/userModels');
-
-admin.initializeApp({
-	credential: admin.credential.cert({
-		type: process.env.FIREBASE_TYPE,
-		project_id: process.env.FIREBASE_PROJECT_ID,
-		private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
-		private_key: process.env.FIREBASE_PRIVATE_KEY,
-		client_email: process.env.FIREBASE_CLIENT_EMAIL,
-		client_id: process.env.FIREBASE_CLIENT_ID,
-		auth_uri: process.env.FIREBASE_AUTH_URI,
-		token_uri: process.env.FIREBASE_TOKEN_URI,
-		auth_provider_x509_cert_url:
-			process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
-		client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
-	}),
-	storageBucket: 'gs://blog-website-bc551.appspot.com',
-});
-
-const bucket = admin.storage().bucket();
 
 const uploadFileController2 = async function (req, res) {
 	try {
-		const fileName = `${Date.now()}__${req.file.originalname}`;
+		await bucket.setCorsConfiguration(corsConfiguration);
+
+		const fileName = `${Date.now()}__${req.file.originalname.replaceAll(
+			' ',
+			'_'
+		)}`;
 
 		const fileBuffer = req.file.buffer;
 		const base64String = fileBuffer.toString('base64');
-		const fileRef = bucket.file(req.id + '/' + fileName);
+		const filePath = req.id + '/' + fileName;
+		const fileRef = bucket.file(filePath);
 		const fileStream = fileRef.createWriteStream({
 			metadata: {
 				contentType: 'font/woff2',
+				cacheControl: 'public, max-age=31536000',
 			},
 		});
 		fileStream.on('error', (error) => {
@@ -39,32 +26,34 @@ const uploadFileController2 = async function (req, res) {
 			});
 		});
 		fileStream.on('finish', () => {
-			fileRef
-				.getSignedUrl({
-					action: 'read',
-					expires: '03-17-2060',
-				})
-				.then(async (url) => {
-					const user = req.userData;
-					const update = {
-						...user,
-						fonts: [...user.fonts, { name: fileName, fontURL: url[0] }],
-					};
+			// Make the uploaded file public
+			fileRef.makePublic(async (err) => {
+				if (err) {
+					console.error('Error making file public:', err);
+					return;
+				}
 
-					await UserModel.findByIdAndUpdate(req.id, update);
+				// Get the public URL of the file
+				const publicUrl = `https://storage.googleapis.com/${bucket.name}/${filePath}`;
 
-					res.status(200).json({
-						status: 200,
-						message: 'Upload successful!',
-						data: { name: fileName, url: url[0] },
-					});
-				})
-				.catch((error) => {
-					res.status(500).json({
-						message: error.message,
-					});
+				const user = req.userData;
+				const update = {
+					...user,
+					fonts: [...user.fonts, { name: fileName, fontURL: publicUrl }],
+				};
+
+				await UserModel.findByIdAndUpdate(req.id, update);
+
+				console.log('Public URL:', publicUrl);
+
+				res.status(200).json({
+					status: 200,
+					message: 'Upload successful!',
+					data: { name: fileName, url: publicUrl },
 				});
+			});
 		});
+
 		fileStream.end(Buffer.from(base64String, 'base64'));
 	} catch (err) {
 		res.status(500).json({
