@@ -30,7 +30,7 @@ app.listen(PORT, () => {
 	console.log('Server is running at', 'http://' + HOST + ':' + PORT);
 });
 
-reload(app);
+// reload(app);
 mongoose
 	.connect(process.env.MONGODB_URI, {
 		useNewUrlParser: true,
