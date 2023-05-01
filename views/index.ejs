@@ -3,11 +3,11 @@
 <%- include("partials/head",{title: "Home | Font Upload" })%>
 
   <body>
-    <header class="py-1"><%- include("partials/navbar") %></header>
+    <header class="py-1 bg-dark"><%- include("partials/navbar") %></header>
     <main>
       <section class="hero py-3 py-md-5">
         <div class="container">
-          <div class="row">
+          <div class="row flex-column-reverse flex-md-column">
             <div class="col-md-6 d-flex flex-column align-items-center align-items-md-start justify-content-center">
               <h1 class="text-white mb-4">Welcome to Font Upload</h1>
               <p class="text-white mb-4">Upload your fonts and share them with the world</p>
@@ -18,10 +18,10 @@
                 <li>Share your fonts with others</li>
                 <li>Free to use</li>
               </ul>
-              <a href="#" class="btn btn-primary btn-lg">Get Started</a>
+              <a href="/signup" class="btn btn-primary btn-lg">Get Started</a>
             </div>
-            <div class="col-md-6 mt-4 mt-md-0">
-              <img src="https://via.placeholder.com/500x500" alt="Hero Image" class="img-fluid">
+            <div class="col-md-6 mb-4 mb-md-0">
+              <img src="/images/hero.jpg" alt="Hero Image" class="img-fluid rounded">
             </div>
           </div>
         </div>
@@ -29,11 +29,13 @@
       <section class="about py-3 py-md-5">
         <div class="container">
           <div class="row">
+            <div class="col-md-6">
+              <img src="/images/hero.jpg" alt=" About Image" class="img-fluid rounded">
+            </div>
             <div class="col-md-6 d-flex flex-column align-items-center align-items-md-start justify-content-center">
               <h2 class="mb-4 text-white">About Us</h2>
               <ul class="text-white">
-                <li>Founded in 2021</li>
-                <li>Headquartered in San Francisco, CA</li>
+                <li>Started in 2023</li>
                 <li>Over 10,000 registered users</li>
                 <li>Partnered with top font designers</li>
               </ul>
@@ -43,9 +45,7 @@
                 easy-to-use
                 interface and vast library of fonts make sharing and discovering new fonts a breeze.</p>
             </div>
-            <div class="col-md-6">
-              <img src="https://via.placeholder.com/500x500" alt="About Image" class="img-fluid">
-            </div>
+
           </div>
         </div>
       </section>
